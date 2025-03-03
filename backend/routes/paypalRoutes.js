@@ -8,9 +8,8 @@ const router = express.Router();
 
 const PAYPAL_CLIENT_ID = process.env.PAYPAL_CLIENT_ID;
 const PAYPAL_SECRET = process.env.PAYPAL_SECRET;
-const PAYPAL_API = "https://api-m.sandbox.paypal.com"; // Change for live mode
+const PAYPAL_API = "https://api-m.sandbox.paypal.com"; 
 
-// Create an order
 router.post("/create-order", async (req, res) => {
     try {
         const response = await fetch(`${PAYPAL_API}/v2/checkout/orders`, {
@@ -32,7 +31,7 @@ router.post("/create-order", async (req, res) => {
     }
 });
 
-// Capture a payment
+
 router.post("/capture-order", async (req, res) => {
     try {
         const { orderID } = req.body;

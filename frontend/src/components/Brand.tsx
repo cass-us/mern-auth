@@ -30,7 +30,7 @@ const brands = [
 
 const Brand: React.FC = () => {
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-black rounded-lg mt-8">
+    <div className="max-w-4xl mx-auto p-6 rounded-lg mt-8">
       <h2 className="text-2xl font-bold text-center mb-4">Popular Brands</h2>
       <div className="grid grid-cols-2 md:grid-cols-3 gap-6 justify-center items-center">
         {brands.map((brand, index) => (

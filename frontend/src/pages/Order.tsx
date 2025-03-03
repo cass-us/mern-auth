@@ -2,9 +2,11 @@ import React, { useState } from "react";
 import suggest1 from "../dumbData/assets/NIKE+DUNK+LOW+RETRO.png";
 import suggest2 from "../dumbData/assets/W+NIKE+DUNK+LOW+NN.png";
 import suggest3 from "../dumbData/assets/nike-1.png";
+import PayPal from "./PayPal";
 
 const Order: React.FC = () => {
   const [step, setStep] = useState(1);
+  const [checkout, setCheckout] = useState(false);
   const [items, setItems] = useState([
     { id: 1, name: "Sneakers", brand: "Nike", image: "https://i8.amplience.net/i/jpl/jd_343799_a?qlt=92", price: 100, quantity: 1 },
     { id: 2, name: "Boots", brand: "Adidas", image: "https://m.media-amazon.com/images/I/71KQ5b5n6fL._AC_UL1500_.jpg", price: 150, quantity: 1 },
@@ -72,7 +74,7 @@ const Order: React.FC = () => {
             <input type="text" placeholder="Postal Code" className="w-full p-2 mb-2 border" />
             <div className="flex justify-between mt-4">
               <button onClick={() => setStep(1)} className="bg-gray-300 p-2 rounded">Back</button>
-              <button onClick={() => setStep(3)} className="bg-blue-500 text-white p-2 rounded">Next</button>
+              <button onClick={() => setStep(3)} className="bg-blue-500 text-white p-2 rounded">Proceed to Checkout</button>
             </div>
           </div>
         )}
@@ -80,18 +82,16 @@ const Order: React.FC = () => {
         {step === 3 && (
           <div>
             <h2 className="text-2xl font-bold mb-4">Payment</h2>
-            <input type="text" placeholder="Card Number" className="w-full p-2 mb-2 border" />
-            <input type="text" placeholder="Expiry Date" className="w-full p-2 mb-2 border" />
-            <input type="text" placeholder="CVV" className="w-full p-2 mb-2 border" />
-            <div className="flex justify-between mt-4">
-              <button onClick={() => setStep(2)} className="bg-gray-300 p-2 rounded">Back</button>
-              <button className="bg-green-500 text-white p-2 rounded">Pay Now</button>
-            </div>
+            {checkout ? (
+              <PayPal />
+            ) : (
+              <button onClick={() => setCheckout(true)} className="bg-blue-500 text-white p-2 rounded">Proceed to Checkout</button>
+            )}
           </div>
         )}
       </div>
 
-      <div className="text-center mt-8 shadow-md p-4"> 
+      <div className="text-center mt-8 shadow-md p-4">
         <h2 className="text-center mb-2 text-lg font-semibold">You May Also Like</h2>
         <div className="flex justify-center gap-4">
           <img src={suggest1} className="w-24 rounded-md shadow" />

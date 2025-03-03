@@ -1,7 +1,8 @@
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";  // Import Link for routing
 import { FaGoogle, FaFacebook, FaInstagram } from "react-icons/fa";
 import { motion } from "framer-motion";
 import backgroundImage from "./assets/background-1.jpg";
-import React, { useState, useEffect } from "react";
 import emoji from "./assets/emoji.gif";
 import axios from "axios";
 
@@ -14,8 +15,6 @@ const SignUp = () => {
         password: "",
         confirmPassword: "",
     });
-
-    console.log(formData);
 
     useEffect(() => {
         const timer = setTimeout(() => setLoading(false), 2000);
@@ -40,7 +39,6 @@ const SignUp = () => {
                 email: formData.email,
                 password: formData.password,
             });
-
             console.log(response.data);
             alert("Registration successful");
         } catch (error) {
@@ -123,7 +121,7 @@ const SignUp = () => {
                 <div className="text-center bg-gray-300 h-[120px] p-2 mt-4 rounded-2xl shadow-md">
                     <ul className="flex justify-center space-x-4 mt-2 text-xs underline text-gray-700">
                         <li><a href="#">Forgot Password?</a></li>
-                        <li><a href="#">Login?</a></li>
+                        <li><Link to="/login">Login?</Link></li> 
                     </ul>
                     <div className="flex justify-center space-x-6 mt-4">
                         <div className="w-10 h-10 bg-red-500 rounded-full flex items-center justify-center">

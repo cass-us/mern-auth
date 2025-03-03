@@ -2,16 +2,8 @@ import mongoose from "mongoose";
 
 const productSchema = new mongoose.Schema(
   {
-    name: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    product_id: {
-      type: String,
-      required: true,
-      unique: true,
-    },
+    name: { type: String, required: true, trim: true },
+    product_id: { type: String, required: true, unique: true },
     category: {
       type: String,
       required: true,
@@ -22,45 +14,22 @@ const productSchema = new mongoose.Schema(
       required: true,
       enum: ["Men", "Women", "Kids"],
     },
-    price: {
-      type: Number,
-      required: true,
-      min: 0,
-    },
-    background_image: {
-      type: String,
+    price: { type: Number, required: true, min: 0 },
+
+    background_image: { type: Buffer, required: true }, 
+    additional_images: {
+      type: [Buffer], 
       required: true,
       validate: {
-        validator: (url) => /^(http|https):\/\/[^ "]+$/.test(url),
-        message: "Background image must be a valid URL",
+        validator: (arr) => arr.length >= 3,
+        message: "There should be at least three additional images",
       },
     },
-    additional_images: {
-      type: [String],
-      required: true,
-      validate: [
-        {
-          validator: (arr) => arr.length >= 3,
-          message: "There should be at least three additional images",
-        },
-        {
-          validator: (arr) => arr.every((img) => /^(http|https):\/\/[^ "]+$/.test(img)),
-          message: "Each additional image must be a valid URL",
-        },
-      ],
-    },
-    description: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    quantity: {
-      type: Number,
-      required: true,
-      min: 0, 
-    },
+
+    description: { type: String, required: true, trim: true },
+    quantity: { type: Number, required: true, min: 0 },
     sizes: {
-      type: [Number], 
+      type: [Number],
       required: true,
       validate: {
         validator: (arr) => arr.length > 0,
@@ -68,11 +37,9 @@ const productSchema = new mongoose.Schema(
       },
     },
   },
-  {
-    timestamps: true, 
-  }
+  { timestamps: true }
 );
 
-const Product = mongoose.model("Product", productSchema);
+const Product = mongoose.models.Product || mongoose.model("Product", productSchema);
 
 export default Product;

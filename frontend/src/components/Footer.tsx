@@ -3,15 +3,12 @@ const Footer = () => {
       <section className="bg-black text-white py-12 mt-8">
         <div className="max-w-6xl mx-auto px-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Company Info */}
             <div>
               <h2 className="text-2xl font-bold mb-4">SneakerFactory</h2>
               <p className="text-gray-400">
                 Your go-to store for premium sneakers. Explore top brands and exclusive collections.
               </p>
             </div>
-  
-            {/* Quick Links */}
             <div>
               <h3 className="text-xl font-bold mb-4">Quick Links</h3>
               <ul className="text-gray-400 space-y-2">
@@ -21,13 +18,11 @@ const Footer = () => {
                 <li><a href="#" className="hover:text-white">FAQ</a></li>
               </ul>
             </div>
-  
-            {/* Contact Info */}
-            <div>
+           <div>
               <h3 className="text-xl font-bold mb-4">Contact Us</h3>
-              <p className="text-gray-400">📍 123 Sneaker St, Johannesburg</p>
-              <p className="text-gray-400">📞 +27 82 761 2678</p>
-              <p className="text-gray-400">✉ cassiusmaropene@gmail.com</p>
+              <p className="text-gray-400"> 123 Sneaker St, Johannesburg</p>
+              <p className="text-gray-400"> +27 82 761 2678</p>
+              <p className="text-gray-400"> cassiusmaropene@gmail.com</p>
             </div>
           </div>
   

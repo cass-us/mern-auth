@@ -7,8 +7,8 @@ export default defineConfig({
     port: 3000,
     proxy: {
       '/api': {
-        target: 'http://localhost:5000', // Fixed: Added missing slashes
-        changeOrigin: true, // Fixed: Typo in "changeOrigion" -> "changeOrigin"
+        target: 'http://localhost:5000', 
+        changeOrigin: true,
       },
     },
   },

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { IoSearchSharp } from "react-icons/io5";
 import { FaHeart, FaCartPlus, FaRegUser } from "react-icons/fa";
 import { FiMenu, FiX } from "react-icons/fi";
@@ -8,7 +9,7 @@ const HeroSection = () => {
   const [showSearch, setShowSearch] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [dropdown, setDropdown] = useState(null);
-  const [userMenu, setUserMenu] = useState(false);
+  const navigate = useNavigate();
 
   const categories = {
     Men: ["Sneakers", "Boots", "Formal Shoes", "Sandals & Flip Flops", "Slip-ons and Loafers"],
@@ -17,7 +18,7 @@ const HeroSection = () => {
   };
 
   return (
-    <div className="bg-black border-b-4 border-white relative">
+    <div className="bg-[#a48282] border-b-4 border-white relative">
       <div className="flex items-center justify-between px-4 py-3 relative z-40">
         <h1 className="text-2xl font-bold text-white">SneakerFactory</h1>
         <div className="relative flex-1 max-w-xl mx-4 hidden sm:block">
@@ -32,15 +33,7 @@ const HeroSection = () => {
           <IoSearchSharp size={22} className="sm:hidden cursor-pointer" onClick={() => setShowSearch(!showSearch)} />
           <FaHeart size={20} className="text-green-600 cursor-pointer" />
           <FaCartPlus size={22} className="cursor-pointer" />
-          <div className="relative z-50">
-            <FaRegUser className="cursor-pointer" onClick={() => setUserMenu(!userMenu)} />
-            {userMenu && (
-              <div className="absolute right-0 top-[50px] w-40 bg-white text-black shadow-md rounded-lg p-2 z-50">
-                <a href="#" className="flex justify-between items-center p-2 hover:bg-gray-200">Sign Up <FaArrowRight /></a>
-                <a href="#" className="flex justify-between items-center p-2 hover:bg-gray-200">Login <FaArrowRight /></a>
-              </div>
-            )}
-          </div>
+          <FaRegUser className="cursor-pointer" onClick={() => navigate('/signup')} />
           <FiMenu size={24} className="sm:hidden cursor-pointer" onClick={() => setMenuOpen(true)} />
         </div>
       </div>
