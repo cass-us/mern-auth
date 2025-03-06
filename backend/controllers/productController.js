@@ -1,28 +1,56 @@
 import mongoose from "mongoose";
-import Product from "../models/Product.js"; 
+import Product from "../models/product.js"; 
+
+
 export const createProduct = async (req, res) => {
     try {
-        const { name, product_id, category, gender, price, background_image, additional_images, description, quantity, sizes } = req.body;
+        const {
+            name, product_id, category, gender, price, background_image, 
+            additional_images, description, quantity, sizes, brand, 
+            isFeatured, collections, material, colors, discount
+        } = req.body;
 
-        if (!name || !product_id || !category || !gender || !price || !background_image || !additional_images || !description || !quantity || !sizes) {
-            return res.status(400).json({ success: false, message: "Please provide all required fields" });
+     
+        if (!req.user || !req.user._id) {
+            return res.status(401).json({ success: false, message: "Unauthorized: User ID required" });
         }
 
-        const newProduct = new Product(req.body);
+    
+        const newProduct = new Product({
+            name, product_id, category, gender, price, background_image, additional_images, 
+            description, quantity, sizes, brand, isFeatured, collections, material, colors, 
+            discount, user: req.user._id
+        });
+
         await newProduct.save();
         res.status(201).json({ success: true, data: newProduct });
+
     } catch (error) {
         console.error("Error creating product:", error);
         res.status(500).json({ success: false, message: "Error creating product", error: error.message });
     }
 };
 
+
 export const getProducts = async (req, res) => {
     try {
-        const products = await Product.find().lean();
+        const { page = 1, limit = 10, sortBy = 'name', order = 'asc', search = '' } = req.query;
+
+        const searchQuery = search ? { name: { $regex: search, $options: 'i' } } : {};
+
+        const sortOrder = order === 'desc' ? -1 : 1;
+        const sort = { [sortBy]: sortOrder };
+
+        const products = await Product.find(searchQuery)
+            .sort(sort)
+            .skip((page - 1) * limit)
+            .limit(parseInt(limit))
+            .lean();
+
         if (!products.length) {
             return res.status(404).json({ success: false, message: "No products found" });
         }
+
         res.status(200).json({ success: true, data: products });
     } catch (error) {
         console.error("Error fetching products:", error);
@@ -30,9 +58,32 @@ export const getProducts = async (req, res) => {
     }
 };
 
+
+export const getProductById = async (req, res) => {
+    const { id } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+        return res.status(400).json({ success: false, message: "Invalid product ID" });
+    }
+
+    try {
+        const product = await Product.findById(id);
+
+        if (!product) {
+            return res.status(404).json({ success: false, message: "Product not found" });
+        }
+
+        res.status(200).json({ success: true, data: product });
+    } catch (error) {
+        console.error("Error fetching product by ID:", error);
+        res.status(500).json({ success: false, message: "Error fetching product", error: error.message });
+    }
+};
+
+
 export const updateProduct = async (req, res) => {
     const { id } = req.params;
-    
+
     if (!mongoose.Types.ObjectId.isValid(id)) {
         return res.status(400).json({ success: false, message: "Invalid product ID" });
     }
@@ -72,23 +123,50 @@ export const deleteProduct = async (req, res) => {
     }
 };
 
-export const getProductById = async (req, res) => {
-    const { id } = req.params;
-
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-        return res.status(400).json({ success: false, message: "Invalid product ID" });
-    }
-
+export const filterBy = async (req, res) => {
     try {
-        const product = await Product.findById(id);
+        const { category, minPrice, maxPrice, gender } = req.query;
 
-        if (!product) {
-            return res.status(404).json({ success: false, message: "Product not found" });
+       
+        const filters = {};
+
+        if (category) {
+            filters.category = category;
         }
 
-        res.status(200).json({ success: true, data: product });
+        if (gender) {
+            filters.gender = gender;
+        }
+
+        if (minPrice || maxPrice) {
+            filters.price = {};
+            if (minPrice) filters.price.$gte = parseFloat(minPrice); 
+            if (maxPrice) filters.price.$lte = parseFloat(maxPrice); 
+        }
+
+       
+        const products = await Product.find(filters).lean();
+
+        if (!products.length) {
+            return res.status(404).json({ success: false, message: "No products found matching your filters" });
+        }
+
+        res.status(200).json({ success: true, data: products });
     } catch (error) {
-        console.error("Error fetching product by ID:", error);
-        res.status(500).json({ success: false, message: "Error fetching product", error: error.message });
+        console.error("Error filtering products:", error);
+        res.status(500).json({ success: false, message: "Internal Server Error", error: error.message });
+    }
+};
+
+export const newArrival = async (req, res) => {
+    try {
+     
+          const newArr = await Product.find().sort({createdAt: -1}).limit(8);
+          res.json(newArr);
+        
+    } catch (error) {
+        console.log(error);
+        res.status(500).send("server error");
+      
     }
 };

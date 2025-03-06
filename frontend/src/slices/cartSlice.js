@@ -1,47 +1,53 @@
-
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 const API_URL = "http://localhost:5000/api/cart";
 const PRODUCT_API_URL = "http://localhost:5000/api/products";
 
-
 export const fetchCart = createAsyncThunk("cart/fetchCart", async (_, { rejectWithValue }) => {
-    //const token ='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NzlhMDMwODQxMmI5NDQwMzdkNDlkNDMiLCJpYXQiOjE3NDAyOTUwNjIsImV4cCI6MTc0Mjg4NzA2Mn0.u89ZD7nNLy2bTN1eM2Nw4qxNww2jnQj6EvcgnMpYXco'
-      
-    
-   const token =  localStorage.getItem("token"); 
-     console.log(PRODUCT_API_URL)
+    const token = localStorage.getItem("token") || ""; // Ensure token is a string
+
     try {
-        
         const response = await fetch(API_URL, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${token}`,
+                "Authorization": token ? `Bearer ${token}` : "", // Avoid invalid header format
             },
             credentials: "include",
-          
         });
-        console.log(token);
-        if (!response.ok) throw new Error("Failed to fetch cart");
 
-        const { data } = await response.json();
-        if (!data || !data.items) throw new Error("Invalid cart data");
-        console.log(data)
+        if (!response.ok) {
+            throw new Error(`Failed to fetch cart: ${response.statusText}`);
+        }
+
+        const result = await response.json();
+        const data = result?.data;
+
+        if (!data || !Array.isArray(data.items)) {
+            throw new Error("Invalid cart data");
+        }
+
+        // Fetch product details
         const itemsWithDetails = await Promise.all(
             data.items.map(async (item) => {
                 if (!item.productId) return null;
-                const productResponse = await fetch(`${PRODUCT_API_URL}/${item.productId}`);
-                if (!productResponse.ok) return null;
-                const product = await productResponse.json();
-                return {
-                    id: item._id,
-                    productId: item.productId,
-                    name: product.name,
-                    price: product.price,
-                    image: product.image,
-                    quantity: item.quantity,
-                };
+
+                try {
+                    const productResponse = await fetch(`${PRODUCT_API_URL}/${item.productId}`);
+                    if (!productResponse.ok) return null;
+                    
+                    const product = await productResponse.json();
+                    return {
+                        id: item._id,
+                        productId: item.productId,
+                        name: product.name || "Unknown",
+                        price: product.price || 0,
+                        image: product.image || "",
+                        quantity: item.quantity,
+                    };
+                } catch {
+                    return null; // Prevent crashes if fetching product fails
+                }
             })
         );
 
@@ -50,7 +56,6 @@ export const fetchCart = createAsyncThunk("cart/fetchCart", async (_, { rejectWi
         return rejectWithValue(error.message);
     }
 });
-
 
 const cartSlice = createSlice({
     name: "cart",

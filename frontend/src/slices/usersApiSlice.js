@@ -1,5 +1,5 @@
 import { apiSlice } from './apiSlice';
-import { setCookie, clearCookie } from './userSlice'; 
+import { setCookie, clearCookie } from './userSlice';  
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
 const USERS_URL = 'http://localhost:5000/api/users';

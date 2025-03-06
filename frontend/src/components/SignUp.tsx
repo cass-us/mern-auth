@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";  // Import Link for routing
+import { Link } from "react-router-dom";
 import { FaGoogle, FaFacebook, FaInstagram } from "react-icons/fa";
 import { motion } from "framer-motion";
+import axios from "axios";
 import backgroundImage from "./assets/background-1.jpg";
 import emoji from "./assets/emoji.gif";
-import axios from "axios";
 
 const SignUp = () => {
     const [loading, setLoading] = useState(true);
@@ -16,7 +16,10 @@ const SignUp = () => {
         confirmPassword: "",
     });
 
+    const [errorMessage, setErrorMessage] = useState("");  
+
     useEffect(() => {
+       
         const timer = setTimeout(() => setLoading(false), 2000);
         return () => clearTimeout(timer);
     }, []);
@@ -32,6 +35,8 @@ const SignUp = () => {
             return;
         }
 
+        setLoading(true);  
+
         try {
             const response = await axios.post("http://localhost:5000/api/users", {
                 name: formData.name,
@@ -41,9 +46,12 @@ const SignUp = () => {
             });
             console.log(response.data);
             alert("Registration successful");
+            setFormData({ name: "", lastName: "", email: "", password: "", confirmPassword: "" }); 
         } catch (error) {
             console.error("Error signing up:", error.response ? error.response.data : error.message);
-            alert("Error signing up. Please check the console for details.");
+            setErrorMessage(error.response ? error.response.data.message : "Error signing up, please try again later.");
+        } finally {
+            setLoading(false);  
         }
     };
 
@@ -68,6 +76,12 @@ const SignUp = () => {
             >
                 <form onSubmit={handleSubmit} className="space-y-2 text-center">
                     <h2 className="text-gray-300 font-bold p-2 text-xl">Register</h2>
+
+                    
+                    {errorMessage && (
+                        <div className="text-red-500 text-sm mb-4">{errorMessage}</div>
+                    )}
+
                     <input
                         name="name"
                         value={formData.name}
@@ -121,7 +135,7 @@ const SignUp = () => {
                 <div className="text-center bg-gray-300 h-[120px] p-2 mt-4 rounded-2xl shadow-md">
                     <ul className="flex justify-center space-x-4 mt-2 text-xs underline text-gray-700">
                         <li><a href="#">Forgot Password?</a></li>
-                        <li><Link to="/login">Login?</Link></li> 
+                        <li><Link to="/login">Login?</Link></li>
                     </ul>
                     <div className="flex justify-center space-x-6 mt-4">
                         <div className="w-10 h-10 bg-red-500 rounded-full flex items-center justify-center">
