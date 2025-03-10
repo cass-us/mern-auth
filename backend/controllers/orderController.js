@@ -6,7 +6,7 @@ export const getOrders = async (req,res) =>{
   try{
      const orders = await Order.find({user: req.user._id}).sort({
         createdAt:-1
-     }) //sort
+     })
 
      res.json(orders);
         

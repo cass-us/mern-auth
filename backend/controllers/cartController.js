@@ -115,23 +115,35 @@ export const removeFromCart = async (req, res) => {
 
 
 export const getCart = async (req, res) => {
-    console.log(req.user);
     try {
+        // Check if there's a user ID or guest ID
         const userId = req.user ? req.user._id : null; 
-        console.log("thse user id",userId);
-        
-        const cart = await Cart.findOne({ user: userId }) || await Cart.findOne({ guestId: req.cookies.guestId });
-        console.log(cart);
+        const guestId = req.cookies.guestId || null;
+
+        console.log("User ID:", req.userId);
+        console.log("Guest ID:", guestId);
+
+        // If both userId and guestId are null, return an error
+        if (!userId && !guestId) {
+            return res.status(400).json({ success: false, message: "User ID and Guest ID are both missing." });
+        }
+
+        // Query for the cart based on userId or guestId
+        const cart = await Cart.findOne({ user: userId }) || await Cart.findOne({ guestId: guestId });
+
+        // Check if cart is found
         if (!cart) {
             return res.status(404).json({ success: false, message: "Cart not found" });
         }
 
+        // Respond with the cart data
         res.status(200).json({ success: true, data: cart });
     } catch (error) {
         console.error("Error fetching cart:", error);
         res.status(500).json({ success: false, message: "Error fetching cart", error: error.message });
     }
 };
+
 
 export const clearCart = async (req, res) => {
     try {

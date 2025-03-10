@@ -3,7 +3,7 @@ import { getOrders, getOrder } from "../controllers/orderController.js";
 import { protect } from "../middleware/authMiddleware.js"; 
 const router = express.Router();
 
-)
+
 router.get("/", protect, getOrders);
 
 

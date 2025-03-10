@@ -28,7 +28,7 @@ const initialState = {
 // Async thunk for user login
 export const loginUser = createAsyncThunk("auth/loginUser", async (userData, { rejectWithValue }) => {
     try {
-        const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/users/auth`, userData);
+        const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/users/auth`, userData);
 
         // Store user data and token in localStorage
         localStorage.setItem("userInfo", JSON.stringify(response.data));
