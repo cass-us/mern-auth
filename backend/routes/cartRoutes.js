@@ -38,10 +38,10 @@ router.post("/", async (req, res) => {
             );
 
             if (productIndex > -1) {
-                // If product exists, update the quantity
+             
                 cart.products[productIndex].quantity += quantity;
             } else {
-                // If not, add a new product entry
+               
                 cart.products.push({
                     productId,
                     name: product.name,
@@ -53,7 +53,7 @@ router.post("/", async (req, res) => {
                 });
             }
         } else {
-            // If cart doesn't exist, create a new cart
+            
             cart = await Cart.create({
                 userId: userId ? userId : undefined,
                 guestId: guestId ? guestId : "guest_" + new Date().getTime(),
